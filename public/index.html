@@ -528,6 +528,15 @@
     messages.scrollTop = messages.scrollHeight;
   }
 
+  function scrollDuringStream() {
+    const msgDiv = document.getElementById('streaming-msg');
+    const messages = document.getElementById('messages');
+    if (!msgDiv || !messages) { scrollToBottom(); return; }
+    // Scroll down until the top of the streaming message reaches the top of the chat window, then stop
+    const offset = msgDiv.getBoundingClientRect().top - messages.getBoundingClientRect().top;
+    if (offset > 0) messages.scrollTop += offset;
+  }
+
   async function streamAssistantReply() {
     isStreaming = true;
     setSendDisabled(true);
@@ -550,7 +559,6 @@
       }
 
       const bubble = addStreamingMessage();
-      document.getElementById('streaming-msg').scrollIntoView({ behavior: 'smooth', block: 'start' });
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let fullText = '';
@@ -571,6 +579,7 @@
             if (data.text) {
               fullText += data.text;
               bubble.innerHTML = formatContent(fullText);
+              scrollDuringStream();
             }
             if (data.done) {
               conversationHistory.push({ role: 'assistant', content: fullText });
