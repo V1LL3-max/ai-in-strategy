@@ -550,6 +550,7 @@
       }
 
       const bubble = addStreamingMessage();
+      document.getElementById('streaming-msg').scrollIntoView({ behavior: 'smooth', block: 'start' });
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let fullText = '';
@@ -570,7 +571,6 @@
             if (data.text) {
               fullText += data.text;
               bubble.innerHTML = formatContent(fullText);
-              scrollToBottom();
             }
             if (data.done) {
               conversationHistory.push({ role: 'assistant', content: fullText });
