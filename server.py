@@ -390,7 +390,14 @@ def static_files(filename):
 @app.get("/health")
 def health():
     key = os.environ.get("ANTHROPIC_API_KEY", "")
-    return {"key_set": bool(key), "key_preview": key[:12] + "..." if key else "MISSING"}
+    env_keys = [k for k in os.environ.keys() if "ANTHROPIC" in k or "API" in k]
+    return {"key_set": bool(key), "key_preview": key[:12] + "..." if key else "MISSING", "env_keys_found": env_keys}
+
+
+@app.get("/debug-env")
+def debug_env():
+    # Show all env var names (not values) so we can see what Railway is passing
+    return {"all_keys": sorted(os.environ.keys())}
 
 
 @app.post("/api/chat")
